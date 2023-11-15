@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+
+    <!--             https://eventsapi.onrender.com/api/Events       https://localhost:7281/swagger/index.html -->
+
+
+
+
+    <meta charset='utf-8' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            axios.get(" https://localhost:7281/swagger/index.html").then(res => {
+                var calendarEl = document.getElementById("calendar");
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: "dayGridMonth",
+                    events: res.data,
+                });
+
+                var l = res.data;
+                for (let i = 0; i < l.length; i++) {
+                    let op = document.createElement('option');
+
+                    op.value = l[i].title;
+                    document.getElementById('select').appendChild(op);
+                }
+
+                calendar.render();
+            });
+        });
+
+
+        function add() {
+            let d = document.getElementById('dat').value;
+            let n = document.getElementById('id').value;
+
+            axios.post(" https://localhost:7281/swagger/index.html", {
+                "dat": d,
+                "title": n
+            }).then(res => {
+                console.log(res.data)
+            })
+        }
+        function update() {
+            let d = document.getElementById('dat').value;
+            let n = document.getElementById('id').value;
+            let id = document.getElementById('select')[document.getElementById('select').selectedIndex].value;
+            axios.delete(`https://localhost:7281/swagger/index.html/${id}`, {
+                "dat": d,
+                "title": n
+            }).then(res => {
+
+                console.log(res.data)
+
+            })
+        }
+        function deletee() {
+            let id = document.getElementById("select")[document.getElementById("select").selectedIndex].value;
+            axios.delete(`https://localhost:7281/swagger/index.html/${id}`).then(res => {
+                console.log(res.data)
+            })
+        }
+
+
+
+    </script>
+
+</head>
+  <body>
+
+
+
+     <button onclick="add()">add event</button>
+     <input id="dat" type="date"></input>
+     <input id="id" title="title"></input>
+     <button onclick="update()">update event</button>
+     <button onclick="deletee()">delete event</button>
+     <select style="width:fit-content;" id="select">בחירת ארוע</select>
+  
+     <div id='calendar'></div>
+    
+     
+
+
+
+  </body>
+</html>
